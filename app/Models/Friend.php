@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Friend extends Model
 {
     const APPROVED = 2;
-    const UNUPPROVED = 1;
+    const UN_APPROVED = 1;
 
     use HasFactory;
 
     protected $table = "friends";
 
     protected $fillable = [
-        'user_id', 'friend_id', 'approved'
+        "user_id", "friend_id", "approved"
     ];
 }

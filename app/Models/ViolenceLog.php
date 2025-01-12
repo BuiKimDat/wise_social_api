@@ -12,6 +12,6 @@ class ViolenceLog extends Model
     protected $table = "violence_logs";
 
     protected $fillable = [
-        'message_id', 'post_id', 'comment_id'
+        "message_id", "post_id", "comment_id"
     ];
 }

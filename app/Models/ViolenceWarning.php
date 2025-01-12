@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class ViolenceWarning extends Model
 {
     use HasFactory;
-    
+
     protected $table = "violence_warnings";
 
     protected $fillable = [
-        'user_id', 'infringe'
+        "user_id", "infringe"
     ];
 }

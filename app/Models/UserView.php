@@ -12,6 +12,6 @@ class UserView extends Model
     protected $table = "user_views";
 
     protected $fillable = [
-        'user_id', 'view_id'
+        "user_id", "view_id"
     ];
 }

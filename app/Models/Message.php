@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
-    const VIEWED = 2;
-    const UNVIEW = 1;
+    CONST VIEWED = 2;
+    const UNVIEW  =  1;
 
     use HasFactory;
 
     protected $table = "messages";
 
     protected $fillable = [
-        'user_id', 'friend_id', 'message', 'is_view'
+        "user_id", "friend_id", "message", "is_view"
     ];
 }

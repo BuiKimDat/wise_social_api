@@ -2,10 +2,10 @@
 
 namespace App\Helpers;
 /**
- 
-Common class response api data to clients*
-Define all response http status code
-*/
+ * Common class response api data to clients
+ *
+ * Define all response http status code
+ */
 class ApiResponse
 {
     public function continue()

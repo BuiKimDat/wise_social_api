@@ -22,33 +22,35 @@
                                 </ul>
                                 <div class="sign_in_sec" :class="{current : choseType == 'login'}" id="tab-1">
                                     <h3>サインイン</h3>
-                                    <form>
+                                    <div class="form">
                                         <div class="row">
                                             <div class="col-lg-12 no-pdd">
                                                 <div class="sn-field">
-                                                    <input type="text" name="email" placeholder="メール">
+                                                    <input type="email" name="email" placeholder="メール" v-model="loginEmail">
                                                     <i class="fa fa-user"></i>
+                                                    <span class="text-danger msgError">{{ loginErrEmailMsg }}</span>
                                                 </div>
                                                 <!--sn-field end-->
                                             </div>
                                             <div class="col-lg-12 no-pdd">
                                                 <div class="sn-field">
-                                                    <input type="password" name="password" placeholder="Password">
+                                                    <input type="password" name="password" placeholder="Password" v-model="loginPassword">
                                                     <i class="fa fa-lock"></i>
+                                                    <span class="text-danger msgError">{{ loginErrPasswordMsg }}</span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 no-pdd">
-                                                <button type="submit" value="submit">サインイン</button>
+                                                <button type="submit" value="submit" v-on:click="login()">サインイン</button>
                                             </div>
                                         </div>
-                                    </form>
+                                    </div>
                                     <!--login-resources end-->
                                 </div>
                                 <!--sign_in_sec end-->
                                 <div class="sign_in_sec" :class="{current : choseType == 'register'}" id="tab-2">
                                     <!--signup-tab end-->
                                     <div class="dff-tab current" id="tab-3">
-                                        <form action="#">
+                                        <div class="form">
                                             <div class="row">
                                                 <div class="col-lg-12 no-pdd">
                                                     <div class="sn-field">
@@ -97,11 +99,12 @@
                                                         <!--fgt-sec end-->
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-12 no-pdd">
+                                                <div class="col-lg-12 no-pdd row">
                                                     <button :class="{'cursor-not-allow' : this.registerTOS === false}" :disabled="this.registerTOS === false" v-on:click="registerValidation()">開始する</button>
+                                                    <img class="btn-register" :class="{'display-none' : this.registerProcess === false}" width="40px" height="40px" src="/src/assets/loading_icon.gif" alt="" srcset="">
                                                 </div>
                                             </div>
-                                        </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -148,6 +151,14 @@ import axios from 'axios';
                 registerRePassword: '',
                 registerErrRePasswordMsg: '',
                 registerTOS: false,
+                registerProcess: false,
+                // For login form
+                loginEmail: '',
+                loginPassword: '',
+                loginTOS: false,
+                loginErrEmailMsg: '',
+                loginErrPasswordMsg: '',
+                loginProcess: false
             }
         },
         /**
@@ -289,9 +300,25 @@ import axios from 'axios';
             registerCheckAllow() {
                 if (this.registerTOS === true) {
                     this.registerTOS = false;
-                } 
-                if (this.registerTOS === false) {
+                } else if (this.registerTOS === false) {
                     this.registerTOS = true;
+                }
+            },
+
+            login() {
+                if (this.loginEmail.length <= 0) {
+                    this.loginErrEmailMsg = "Email ユーザ名を入力してください。";
+                } else {
+                    this.loginErrEmailMsg = "";
+                }
+                if (this.loginPassword.length <= 0) {
+                    this.loginErrPasswordMsg = "Password を入力してください。";
+                } else {
+                    this.loginErrPasswordMsg = "";
+                }
+                if (this.loginErrEmailMsg == "" && this.loginErrPasswordMsg == "") {
+                    // Call to function login
+                    this.processLogin();
                 }
             },
 
@@ -321,17 +348,70 @@ import axios from 'axios';
              * Regirect router /auth
              */
             async register() {
+                // Disabled button register
+                this.registerCheckAllow();
+                this.registerProcess = true;
                 try {
-                    const callRegisterAPI = await axios.post('/register', {
+                    const callRegisterAPI = await axios.post('http://localhost/wise_social_api/public/api/register', {
                         // Pass param to header
+                        name: this.registerFullName,
+                        email: this.registerEmail,
+                        password: this.registerPassword,
+                        re_password: this.registerRePassword
                     }).then(function (res) {
                         // Api response success
+                        if (res.data.code == 200) {
+                            window.location.reload();
+                        } else {
+                            alert(res.data.message);
+                        }
                     }).catch(function (err) {
                         // API response error code
+                        alert(err);
                     });
                 } catch (err) {
                     // Call to api failed
+                    console.log(err);
                 }
+                // Enabled button register
+                this.registerCheckAllow();
+                this.registerProcess = false;
+            },
+
+            /**
+             * Async await function login
+             * 
+             * Call to api endpoint /login
+             * Method post pass param
+             * Regirect router /auth
+             */
+             async processLogin() {
+                // Disabled button register
+                this.loginProcess = true;
+                try {
+                    const callRegisterAPI = await axios.post('http://localhost/wise_social_api/public/api/login', {
+                        // Pass param to header
+                        email: this.loginEmail,
+                        password: this.loginPassword,
+                    }).then(function (res) {
+                        // Api response success
+                        if (res.data.code == 200) {
+                            // Save to session storage
+                            sessionStorage.setItem("token", res.data.data.plainTextToken);
+                            window.location.href = "/index"; 
+                        } else {
+                            alert(res.data.message);
+                        }
+                    }).catch(function (err) {
+                        // API response error code
+                        alert(err);
+                    });
+                } catch (err) {
+                    // Call to api failed
+                    console.log(err);
+                }
+                // Enabled button register
+                this.loginProcess = false;
             }
         },
     }

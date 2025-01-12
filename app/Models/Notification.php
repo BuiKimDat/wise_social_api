@@ -11,6 +11,7 @@ class Notification extends Model
     const VIEWED = 2;
     const STATUS_WAIT = 'wait';
     const STATUS_DONE = 'done';
+
     use HasFactory;
 
     protected $table = "notifications";

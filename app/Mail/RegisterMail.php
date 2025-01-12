@@ -20,7 +20,6 @@ class RegisterMail extends Mailable
      */
     public function __construct($user)
     {
-        
         $this->user = $user;
     }
 
@@ -40,7 +39,8 @@ class RegisterMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mails.register', with: [
+            view: 'mails.register',
+            with: [
                 'user' => $this->user
             ]
         );
